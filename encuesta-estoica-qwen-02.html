@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Encuesta Estoica 🏛️</title>
+  <style>
+    :root {
+      --bg-body: #f0f9ff;
+      --bg-card: #ffffff;
+      --header-bg: #e0f2fe;
+      --btn-bg: #bbf7d0;
+      --btn-hover: #86efac;
+      --radio-checked: #c7d2fe;
+      --text: #1e293b;
+      --shadow: rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px var(--shadow);
+      padding: 30px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      background-color: var(--header-bg);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .intro {
+      font-style: italic;
+      color: #475569;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .user-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .user-info label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #334155;
+    }
+
+    .user-info input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .question {
+      margin-bottom: 24px;
+      padding: 16px;
+      background-color: #fafafa;
+      border-radius: 12px;
+    }
+
+    .question-text {
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .scale label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background-color: #f1f5f9;
+      transition: background-color 0.2s;
+      font-size: 0.85rem;
+      text-align: center;
+      min-width: 70px;
+    }
+
+    .scale input[type="radio"] {
+      display: none;
+    }
+
+    .scale input[type="radio"]:checked + label {
+      background-color: var(--radio-checked);
+      font-weight: bold;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: var(--btn-bg);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #0f766e;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--btn-hover);
+    }
+
+    #results {
+      display: none;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-title {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      color: #065f46;
+    }
+
+    .result-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    .result-data {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .result-level {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 12px 0;
+      color: #1e40af;
+    }
+
+    .recommendations ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .recommendations li {
+      margin-bottom: 8px;
+    }
+
+    .print-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #ede9fe;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #5b21b6;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .print-btn:hover {
+      background-color: #ddd6fe;
+    }
+
+    .error-message {
+      color: #dc2626;
+      background-color: #fef2f2;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 16px;
+      font-weight: 500;
+      text-align: center;
+      border: 1px solid #fecaca;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .scale label {
+        min-width: auto;
+        padding: 6px 8px;
+        font-size: 0.75rem;
+      }
+
+      .user-info {
+        flex-direction: column;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        padding: 20px;
+      }
+      .print-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Encuesta: Evalúa tu Coherencia con Principios Estoicos 🏛️</h1>
+      <p class="intro">Reflexiona honestamente sobre cómo vives tus días. No hay respuestas correctas o incorrectas, solo oportunidades para crecer.</p>
+    </header>
+
+    <div class="user-info">
+      <div style="flex: 1;">
+        <label for="userName">Nombre completo:</label>
+        <input type="text" id="userName" placeholder="Ej. Carlos Roel" required>
+      </div>
+      <div style="flex: 1;">
+        <label for="surveyDate">Fecha:</label>
+        <input type="date" id="surveyDate">
+      </div>
+    </div>
+
+    <form id="stoicSurvey">
+      <!-- Questions will be injected by JS -->
+    </form>
+
+    <div id="results">
+      <h2 class="result-title">✨ Tu Nivel Estoico ✨</h2>
+      <div class="result-subtitle" id="resultHeader"></div>
+      <div class="result-data">
+        <p><strong>Puntaje total:</strong> <span id="totalScore"></span></p>
+        <p><strong>Porcentaje Estoico:</strong> <span id="percentage"></span>%</p>
+      </div>
+      <div class="result-level" id="level"></div>
+      <div id="description"></div>
+      <div class="recommendations" id="recommendations"></div>
+      <button class="print-btn" onclick="window.print()">🖨️ Imprimir Resultados</button>
+    </div>
+  </div>
+
+  <script>
+    // Set today's date as default
+    document.getElementById('surveyDate').valueAsDate = new Date();
+
+    const questions = [
+      "Cuando enfrento un contratiempo inesperado, trato de mantener la calma y buscar soluciones en lugar de frustrarme.",
+      "Prefiero concentrarme en lo que puedo controlar y no preocuparme por lo que escapa de mis manos.",
+      "Cuando alguien me critica, primero reflexiono si la crítica es justa antes de molestarme.",
+      "En situaciones de estrés, suelo buscar comprender mi reacción antes de actuar impulsivamente.",
+      "Si pierdo algo valioso, intento aceptar la pérdida sin dejar que esto afecte mi bienestar emocional.",
+      "Cuando las cosas no salen como planeo, intento adaptarme y aprender en lugar de lamentarme.",
+      "Mantengo en mente que nada dura para siempre, ni las buenas ni las malas circunstancias.",
+      "Dedico tiempo a reflexionar sobre mis pensamientos y emociones para evitar actuar por impulso.",
+      "Me esfuerzo por tomar decisiones basadas en la razón más que en emociones pasajeras.",
+      "Entiendo que la virtud y el carácter son lo más importante para mi felicidad, más que las posesiones materiales.",
+      "Cuando enfrento problemas con otras personas, intento entender su punto de vista antes de juzgarlas.",
+      "Evito que enojos o resentimientos acumulados afecten mis relaciones personales.",
+      "Suelo contemplar la idea de que enfrentar dificultades fortalece mi carácter.",
+      "Antes de actuar, considero si mis acciones contribuyen al bien común o solo a mis intereses.",
+      "En momentos de incertidumbre, trato de aceptar lo que sucede en lugar de resistirme.",
+      "Valoro más aprender de los errores que lamentarlos sin reflexión.",
+      "En mi día a día, practico la moderación y evito excesos que puedan perjudicarme.",
+      "Cuando me enfrento a personas con opiniones diferentes, trato de mantener un diálogo serio y respetuoso.",
+      "Considero que no debo buscar aprobación externa para sentirme tranquilo conmigo mismo.",
+      "Cuando experimento dolor o incomodidad física, intento mantener la mente lo más serena posible.",
+      "No permito que el miedo o la ansiedad me paralicen ante nuevos desafíos.",
+      "Soy capaz de desacoplar mi valor personal de los resultados externos que obtengo.",
+      "La paciencia es una cualidad que intento cultivar regularmente.",
+      "Prefiero evaluar mis logros con honestidad antes que buscar reconocerme públicamente.",
+      "Procuro no quejarme sobre cosas que no puedo cambiar.",
+      "Entiendo que la verdadera libertad proviene de controlar mis propias reacciones.",
+      "Me esfuerzo en ser consciente de mis prejuicios y corregirlos.",
+      "En conflictos emocionales, prefiero tomar distancia temporalmente para pensar con claridad.",
+      "Sé cuándo es momento de actuar y cuándo es mejor esperar pacientemente.",
+      "Considero que la felicidad depende en gran parte de cómo interpreto las situaciones.",
+      "Intento ser agradecido con lo que tengo sin obsesionarme con lo que falta.",
+      "Trato de aceptar las críticas constructivas sin sentirme atacado.",
+      "No suelo juzgar a los demás por sus errores, sino que considero que todos estamos en proceso de mejora.",
+      "Evito dejarme llevar por la opinión popular si va en contra de mis principios.",
+      "Siempre trato de mantener equilibrio emocional ante buenas o malas noticias.",
+      "En situaciones difíciles, suelo centrarme en pequeñas acciones que puedo realizar ahora mismo.",
+      "Me esfuerzo por ser honesto conmigo mismo, aunque la verdad sea incómoda.",
+      "Intento acostumbrarme a la idea de que la vida puede ser impredecible y la incertidumbre forma parte de ella.",
+      "Regularmente practico momentos de reflexión sobre mis valores y metas personales.",
+      "Me esfuerzo por ser amable y justo incluso con personas con las que no tengo afinidad.",
+      "Considero que una persona virtuosa debe ser su propio guía y juez interno.",
+      "Cuando recibo una mala noticia, intento primero aceptar y luego planear los pasos a seguir con racionalidad.",
+      "Me doy permiso para sentir tristeza o frustración, pero no permito que definan mi estado general.",
+      "Prefiero interpretar las dificultades como oportunidades para crecer y no como castigos.",
+      "Me esfuerzo por separar mis juicios personales de los hechos objetivos de una situación.",
+      "Mantengo presente que la mayoría de mis preocupaciones están relacionadas con percepciones internas más que con la realidad externa.",
+      "Suelo recordar que la virtud reside en la intención y no solo en el resultado.",
+      "Cuando noto que una emoción fuerte me domina, practico técnicas para recuperar la tranquilidad.",
+      "Me esfuerzo por perdonar y dejar ir rencores para liberarme emocionalmente.",
+      "Entiendo que vivir de acuerdo a mis valores es más importante que buscar complacencia externa."
+    ];
+
+    const resultsData = [
+      {
+        range: [0, 20],
+        level: "Muy Bajo",
+        description: "El encuestado muestra predominancia de reacciones impulsivas, dificultad para aceptar la realidad y escaso autocontrol emocional. Es probable que sienta mucha frustración frente a eventos externos y tenga dificultades para manejar el estrés.",
+        recommendations: [
+          "Practicar ejercicios básicos de respiración y atención plena para mejorar la regulación emocional.",
+          "Reflexionar sobre la distinción entre lo que puede controlar y lo que no, enfocándose en lo primero.",
+          "Introducir lecturas sencillas sobre autocontrol y aceptación, empezando con fragmentos de Epicteto o Séneca.",
+          "Evitar reaccionar inmediatamente y darse tiempo para analizar las situaciones antes de actuar."
+        ]
+      },
+      {
+        range: [21, 40],
+        level: "Bajo",
+        description: "Existe alguna conciencia sobre la necesidad de controlar emociones y aceptar circunstancias, pero con dificultades para aplicarlo consistentemente. Puede experimentar altibajos emocionales y tomar decisiones influenciado por impulsos.",
+        recommendations: [
+          "Practicar la reflexión diaria, escribiendo un breve diario sobre emociones y acciones.",
+          "Establecer metas pequeñas para responder con calma en situaciones específicas difíciles.",
+          "Profundizar en citas estoicas claves que refuerzan el control racional y la aceptación.",
+          "Buscar apoyo en grupos de discusión o talleres para fortalecer la práctica emocional."
+        ]
+      },
+      {
+        range: [41, 60],
+        level: "Moderado",
+        description: "El estilo de vida refleja la adopción parcial de principios estoicos, aunque con áreas de inconsistencia. Hay avances en manejo emocional y aceptación, pero todavía puede caer en reacciones impulsivas o frustración.",
+        recommendations: [
+          "Perfeccionar la práctica de separación entre eventos y juicios personales, revisando percepciones.",
+          "Implementar ejercicios de autoevaluación regular en momentos clave (ej. tras enfrentamientos o fracasos).",
+          "Fortalecer el hábito de enfocarse en la virtud y en la intención correcta más que en resultados externos.",
+          "Leer más extensamente textos de Marco Aurelio y buscar frases aplicables que inspiren carácter."
+        ]
+      },
+      {
+        range: [61, 80],
+        level: "Alto",
+        description: "La persona muestra un buen nivel de autocontrol, aceptación y enfoque racional incluso en la vida cotidiana. Sus decisiones tienden a estar guiadas por reflexión y madurez emocional.",
+        recommendations: [
+          "Mantener y profundizar la práctica mediante diario filosófico o meditación sobre principios estoicos.",
+          "Asumir un rol activo en compartir conocimientos o apoyar a otros en su desarrollo emocional.",
+          "Explorar textos estoicos más complejos y contextualizarlos en la vida actual.",
+          "Desafiarse a aplicar la filosofía estoica aún en situaciones emocionalmente intensas o conflictivas."
+        ]
+      },
+      {
+        range: [81, 100],
+        level: "Muy Alto",
+        description: "El encuestado vive con un alto grado de coherencia con principios estoicos, evidenciando estabilidad emocional, aceptación sólida y racionalidad en sus actos, incluso bajo presión intensa.",
+        recommendations: [
+          "Mantener la praxis firme y servir como ejemplo y mentor en comunidades interesadas en filosofía práctica.",
+          "Profundizar en el estudio comparativo con otras corrientes filosóficas o psicológicas de autocontrol.",
+          "Participar en proyectos o investigaciones sobre psicología positiva desde una mirada estoica.",
+          "Continuar cultivando la virtud y la sabiduría para seguir creciendo personalmente y aportando a la sociedad."
+        ]
+      }
+    ];
+
+    // Build form dynamically
+    const form = document.getElementById('stoicSurvey');
+    let formHTML = '';
+
+    questions.forEach((q, i) => {
+      const qNum = i + 1;
+      formHTML += `
+        <div class="question">
+          <div class="question-text">${qNum}. ${q}</div>
+          <div class="scale">
+            <input type="radio" name="q${qNum}" id="q${qNum}_1" value="1"><label for="q${qNum}_1">1<br>Nunca</label>
+            <input type="radio" name="q${qNum}" id="q${qNum}_2" value="2"><label for="q${qNum}_2">2<br>Rara vez</label>
+            <input type="radio" name="q${qNum}" id="q${qNum}_3" value="3"><label for="q${qNum}_3">3<br>A veces</label>
+            <input type="radio" name="q${qNum}" id="q${qNum}_4" value="4"><label for="q${qNum}_4">4<br>Frecuentemente</label>
+            <input type="radio" name="q${qNum}" id="q${qNum}_5" value="5"><label for="q${qNum}_5">5<br>Siempre</label>
+          </div>
+        </div>
+      `;
+    });
+
+    formHTML += `<div id="errorMessage" class="error-message">⚠️ Por favor, responde todas las preguntas antes de continuar.</div>`;
+    formHTML += `<button type="button" class="submit-btn" onclick="calculateResult()">✨ Ver mi Nivel Estoico ✨</button>`;
+    form.innerHTML = formHTML;
+
+    // Function to check if all questions are answered
+    function checkAllAnswered() {
+      let answered = 0;
+      for (let i = 1; i <= 50; i++) {
+        if (document.querySelector(`input[name="q${i}"]:checked`)) {
+          answered++;
+        }
+      }
+      const errorMsg = document.getElementById('errorMessage');
+      if (answered === 50) {
+        errorMsg.style.display = 'none';
+      }
+    }
+
+    // Add event listeners to all radio buttons
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', checkAllAnswered);
+    });
+
+    function calculateResult() {
+      const name = document.getElementById('userName').value.trim();
+      const dateInput = document.getElementById('surveyDate').value;
+
+      if (!name) {
+        alert("Por favor, ingresa tu nombre.");
+        return;
+      }
+
+      if (!dateInput) {
+        alert("Por favor, selecciona una fecha.");
+        return;
+      }
+
+      let total = 0;
+      let answered = 0;
+      const errorMsg = document.getElementById('errorMessage');
+
+      for (let i = 1; i <= 50; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) {
+          total += parseInt(selected.value);
+          answered++;
+        }
+      }
+
+      if (answered !== 50) {
+        errorMsg.style.display = 'block';
+        errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const percentage = ((total - 50) / 200) * 100;
+      let result = resultsData[resultsData.length - 1];
+
+      for (const r of resultsData) {
+        if (percentage >= r.range[0] && percentage <= r.range[1]) {
+          result = r;
+          break;
+        }
+      }
+
+      const dateObj = new Date(dateInput);
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = dateObj.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+
+      document.getElementById('resultHeader').textContent = `Nivel Estoico para: ${name}, Fecha: ${formattedDate}`;
+      document.getElementById('totalScore').textContent = total;
+      document.getElementById('percentage').textContent = percentage.toFixed(1);
+      document.getElementById('level').textContent = `Nivel: ${result.level}`;
+      document.getElementById('description').textContent = result.description;
+
+      const recList = result.recommendations.map(r => `<li>${r}</li>`).join('');
+      document.getElementById('recommendations').innerHTML = `<ul>${recList}</ul>`;
+
+      document.querySelector('.user-info').style.display = 'none';
+      document.getElementById('stoicSurvey').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+    }
+  </script>
+</body>
+</html>F
